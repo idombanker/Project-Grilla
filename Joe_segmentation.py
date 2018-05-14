@@ -64,12 +64,12 @@ class Joe_segmentation:
 		temp = np.ones([img.shape[0],img.shape[1]],dtype = np.uint16)
 
 		for i in range(self.number_regions):
-			temp[index[i][0],index[i][1]] = 255
+			temp[int(index[i][0]),int(index[i][1])] = 255
 
 		out = cv2.merge((temp,temp,temp))
 		out = np.array(out, dtype = np.uint8)
 
-		result = slic.contours(out, seg.slic_result)
+		result = slic.contours(out, self.slic_result)
 
 		return result 
 
