@@ -1,9 +1,37 @@
-import numpy as np 
+import Tkinter as tk
 
-x = np.array([[0,1,24,3],[1,1,1,2],[0,1,1,1],[2,1,1,0]])
+def draw(event):
+    x, y = event.x, event.y
+    if canvas.old_coords:
+        x1, y1 = canvas.old_coords
+        canvas.create_line(x, y, x1, y1)
+    canvas.old_coords = x, y
 
-print x
+def draw_line(event):
 
-y = x[0:1,1:3]
+    
+    if str(event.type) == 'ButtonPress':
+        canvas.old_coords = event.x, event.y
+        print "draw line"
+    elif str(event.type) == 'ButtonRelease':
+        x, y = event.x, event.y
+        x1, y1 = canvas.old_coords
+        canvas.create_line(x, y, x1, y1)
+        print " button release"
 
-print y
+def reset_coords(event):
+    canvas.old_coords = None
+
+root = tk.Tk()
+
+canvas = tk.Canvas(root, width=400, height=400)
+canvas.pack()
+canvas.old_coords = None
+
+root.bind('<ButtonPress-1>', draw_line)
+root.bind('<ButtonRelease-1>', draw_line)
+print "working!"
+root.bind('<B1-Motion>', draw)
+root.bind('<ButtonRelease-1>', reset_coords)
+
+root.mainloop()

@@ -6,12 +6,12 @@ import time
 
 start = time.clock()
 a = Joe_segmentation('./frame/00094.jpg', './svmfile.pkl')
-result = a.segmentation()
+result,temp1,temp2 = a.segmentation()
 
 cv2.imshow("result", result)
 t = time.clock() - start
 print "runing time: %f"%t
-cv2.waitKey(0)
+
 
 def main():
 	sk_f = "./feature/outfile_sk.npy"
@@ -72,3 +72,5 @@ def svm_calculate_accuracy(sk_feature, fl_feature, ot_feature,data_size=150):
 	print "the accuracy of the svm is : %f"%accuracy
 	# joblib.dump(clf, './svmfile.pkl')
 	return clf
+main()
+cv2.waitKey(0)

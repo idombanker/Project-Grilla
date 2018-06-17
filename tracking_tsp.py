@@ -70,6 +70,50 @@ def visualization(mat):
 
 	return out
 
+def label_combination(list0, list1,list2, sp_mat1):
+	# list0: index list of previous frame
+	# list1: proba list of previous frame
+	# list2: list of proba of each label corresponding to the super in indexes of current frame
+	list_sp = np.unique(sp_mat1)
+	seg = np.zeros((sp_mat1.shape[0],sp_mat1.shape[1]))
+	seg = seg - 1
+	list1.append([0.0, 0.0, 0.0])
+	# base on the order of Kalman filter :
+	# 500 of them , and track them through time
+	for index , i  in enumerate(list_sp):
+		seg[np.where(sp_mat1 == i)] = generate_label_from_proba(list1[find(list0,i)],list2[index])
+
+
+	out = visualization(seg)
+
+	return out
+
+def find(list1,val):
+	index = -1 
+	for i, item in enumerate(list1):
+		if item == val:
+			index = i
+		else:
+			pass
+	return index 
+
+def generate_label_from_proba(arr1,arr2):
+	# return the indices 
+	temp = np.argmax((arr1 + arr2)/2.0)
+	
+	if temp == 0:
+		pass
+	elif temp == 1:
+		pass
+	elif temp == 2:
+		pass
+	else:
+		print " some thing wrong !"
+		print temp
+		print arr1 
+		print arr2
+	return temp
+
 
 def main():
 
@@ -88,28 +132,39 @@ def main():
 	sp_labels2 = np.array(sp_labels2,dtype=np.int32)
 
 	# sp_labels1 = mat['sp_labels'][:,:,18]
-	sp_labels1 = mat['sp_labels'][:,:,93]
+	sp_labels1 = mat['sp_labels'][:,:,91]
 
-	a = Joe_segmentation('./frame/00094.jpg', './svmfile.pkl')
-
-	[result, list_seg19] = a.segmentation_tsp(sp_labels1)
+	a = Joe_segmentation('./frame/00092.jpg', './svmfile.pkl')
+	sp20 = np.array(tranpose(sp_labels2),dtype = np.int32)
+	sp19 = np.array(tranpose(sp_labels1),dtype = np.int32)
+	[result, list_seg19, list_seg19_proba] = a.segmentation_tsp(sp19)
 	result19 = np.array(result,dtype=np.uint8)
 
 	seg = tracking(list_seg19, sp_labels1, sp_labels2)
-	sp20 = np.array(tranpose(sp_labels2),dtype = np.int32)
+
 	contours_seg = slic.contours(seg, sp20)
 
 
 	b = Joe_segmentation('./frame/00095.jpg', './svmfile.pkl')
-	[result, list_seg20] = b.segmentation_tsp(sp_labels2)
+	[result, list_seg20, list_seg20_proba] = b.segmentation_tsp(sp20)
 	result20 = np.array(result,dtype=np.uint8)
 	# sp20 = np.array(tranpose(sp_labels2),dtype = np.int32)
 	contours20 = slic.contours(result20, sp20)
+	
+	# print np.unique(sp19)
+	# print "\n"
+	# print list_seg19_proba
+	# print "\n"
+	# print list_seg20_proba
+	# combine labels 
+	combination_result= label_combination(np.unique(sp19), list_seg19_proba, list_seg20_proba, sp20)
+	contours_combination = slic.contours(combination_result, sp20)
 
+	cv2.imshow("current_image",b.original_image)
+	cv2.imshow("result_track", seg)
+	cv2.imshow("result_seg",result20)
+	cv2.imshow("combination_result", combination_result)
 
-
-	cv2.imshow("result_track", contours_seg)
-	cv2.imshow("result_seg",contours20)
 	cv2.waitKey(0)
 
 main()

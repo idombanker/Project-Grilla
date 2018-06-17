@@ -1,6 +1,10 @@
 # Name: Banana's components detection
 # Author: Joe
 # Note: I reserve all the right for the final explanation
+# Genius is one percent inspiration and ninety-nine percent perspiration. 
+# Without the one percent of inspiration, all the perspriation in the world 
+# is only a bucket of sweat ---- I admit that I don't have the inspiration,
+# so now allow me to present you my bucket of sweat. :)
 
 import cv2
 import numpy as np
@@ -62,7 +66,7 @@ class Joe_segmentation:
            		index: index (x,y) of  centroids of superpixels
 		'''
 		temp = np.ones([img.shape[0],img.shape[1]],dtype = np.uint16)
-
+		
 		for i in range(self.number_regions):
 			temp[int(index[i][0]),int(index[i][1])] = 255
 
@@ -206,12 +210,16 @@ class Joe_segmentation:
 		output_mask = self.label_mask.copy()
 		list_sp = np.unique(output_mask)
 		list_seg = list_sp.copy()
+		# the size of list_seg_pro woould become 1500: not correct way to  !!!
+		# list_seg_pro = [0.,0.,0.]*self.number_regions
+		list_seg_pro = [0]*self.number_regions
 
 		for index, i in enumerate(list_sp):
 			mask = self.extract_mask(self.label_mask, i)
 			testdata = self.feature_calc_save(self.hsvimage,mask)
 			results= self.clf.predict([testdata])
 			list_seg[index] = results 
+			list_seg_pro[index] = self.clf.predict_proba([testdata])
 			output_mask[np.where(self.label_mask == i)] = results[0]
 
 		output = [1,2,3]
@@ -223,7 +231,7 @@ class Joe_segmentation:
 			# output[i] = out_put
 
 		out = cv2.merge([output[0],output[1],output[2]])
-		return out, list_seg
+		return out, list_seg, list_seg_pro
 		# return output_mask
 
 	def segmentation_tsp(self,tsp_mask):
@@ -234,12 +242,14 @@ class Joe_segmentation:
 		print " list_sp:\n"
 		# print list_seg
 		print list_seg.shape
+		list_seg_pro = [0]*len(list_sp)
 
 
 		for index, i in enumerate(list_sp):
 			mask = self.extract_mask(tsp_mask, i)
 			testdata = self.feature_calc_save(self.hsvimage,mask)
 			results = self.clf.predict([testdata])
+			list_seg_pro[index] = self.clf.predict_proba([testdata])
 			list_seg[index] = results 
 			output_mask[np.where(tsp_mask == i)] = results[0]
 
@@ -252,7 +262,8 @@ class Joe_segmentation:
 			# output[i] = out_put
 
 		out = cv2.merge([output[0],output[1],output[2]])
-		return out, list_seg
+
+		return out, list_seg, list_seg_pro
 		# return output_mask
 
 	# not working
@@ -380,8 +391,8 @@ if __name__ == "__main__":
 	# 1: training new svm model 2&3: use existed model to predict
 	# c = svm_training('./feature/outfile_sk.npy', './feature/outfile_fl.npy', './feature/outfile_ot.npy')
 
-	a = Joe_segmentation('./frame/00020.jpg', './svmfile.pkl')
-	result = a.segmentation()
+	a = Joe_segmentation('opticalfb.png', './svmfile.pkl')
+	result,temp1,temp2 = a.segmentation()
 	cv2.imshow("result", result)
 	cv2.waitKey(0)
 
