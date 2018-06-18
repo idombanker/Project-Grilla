@@ -28,7 +28,8 @@ class Joe_segmentation:
 		self.clf = joblib.load(input_clf)
 		self.slic_result = slic.slic_n(self.original_image, number_regions, consistency)
 		self.label_mask = np.array(self.slic_result,dtype=np.int32)
-
+		self.label_mask2 = self.label_mask.copy()
+	
 		pass
 
 	# set random color for segmentation output
@@ -229,7 +230,7 @@ class Joe_segmentation:
 			output[i] = np.zeros(self.label_mask.shape)
 			output[i][np.where(output_mask == i)] = 255
 			# output[i] = out_put
-
+		self.label_mask2 = output_mask
 		out = cv2.merge([output[0],output[1],output[2]])
 		return out, list_seg, list_seg_pro
 		# return output_mask
@@ -392,13 +393,14 @@ if __name__ == "__main__":
 	# c = svm_training('./feature/outfile_sk.npy', './feature/outfile_fl.npy', './feature/outfile_ot.npy')
 
 	# a = Joe_segmentation('opticalfb.png', './svmfile.pkl')
-	a = Joe_segmentation('./frame_peeling/00071.jpg', './svmfile.pkl')
+	a = Joe_segmentation('./opticalfb.png', './svmfile.pkl')
 	
 	result,temp1,temp2 = a.segmentation()
 	cv2.imshow("result", result)
+	cv2.imwrite("temp_seg.jpg",result)
 	cv2.waitKey(0)
 
-	generate_semantic_segmantation_result()
+	# generate_semantic_segmantation_result()
 
 
 	pass

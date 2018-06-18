@@ -2,8 +2,6 @@ import numpy as np
 import cv2
 
 img = cv2.imread('opticalhsv.png')
-# rows, cols, channels = img.shape
-# img = cv2.resize(img, (cols/2, rows/2), interpolation=cv2.INTER_AREA)
 Z = img.reshape((-1,3))
 
 # convert to np.float32
@@ -18,15 +16,26 @@ ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
 center = np.uint8(center)
 res = center[label.flatten()]
 res2 = res.reshape((img.shape))
-
-# print np.count_nonzero(res2)
-print np.where(res2>8)
-res2[np.where(res2>8)] = 255
-res2[np.where(res2<8)] = 0
-
-# res2 = cv2.cvtColor(res2, cv2.COLOR_BGR2GRAY)
 print np.unique(res2[:,:,2])
-print res2[:,:,1]
-cv2.imshow('res2',res2)
+print np.unique(res2[:,:,1])
+print res2.shape
+
+temp = np.ones((res2.shape[0],res2.shape[1]),dtype = int)
+
+for j in np.unique(res2[:,:,1]):
+	temp[np.where(res2[:,:,1]==j)]=j
+# temp[np.where(res2[:,:,1]==43)]=1
+# temp[np.where(res2[:,:,1]==128)]=2
+# temp[np.where(res2[:,:,1]==204)]=3
+
+for index, i in enumerate( np.unique(res2[:,:,1])):
+	print i 
+	res2[temp==i] = np.array([index*100]*3)
+	# np.random.randint(256, size=3)
+
+# orders of the cluster : from big size -----> small size
+ 
+cv2.imshow('k = 2',res2)
+cv2.imwrite("temp.jpg",res2)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
