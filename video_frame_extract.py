@@ -17,7 +17,7 @@ def video_to_frames(input_loc, output_loc):
         pass
     # Log the time
     time_start = time.time()
-    # Start capturing the feed
+    # Start capturing the feed  
     cap = cv2.VideoCapture(input_loc)
     # Find the number of frames
     video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
@@ -30,16 +30,17 @@ def video_to_frames(input_loc, output_loc):
         # Extract the frame
         ret, frame = cap.read()
         # Write the results back to output location.
-        if True :
+        # if True :
+        if count%5 ==1:
             rows, cols, channels = frame.shape
-            frame = cv2.resize(frame, (cols/2, rows/2), interpolation=cv2.INTER_AREA)
+            # frame = cv2.resize(frame, (cols/2, rows/2), interpolation=cv2.INTER_AREA)
             cv2.imwrite(output_loc + "/%#05d.jpg" % (temp+1), frame)
 
             temp += 1
         count = count + 1
         # If there are no more frames left
         # if (count > (video_length-1)):
-        if count > 100:
+        if count > 1000:
             # Log the time again
             time_end = time.time()
             # Release the feed
@@ -49,8 +50,8 @@ def video_to_frames(input_loc, output_loc):
             print ("It took %d seconds forconversion." % (time_end-time_start))
             break
 
-input_loc = './video/banana.m4v'
-output_loc = './frame/'
+input_loc = './video/peeling_1.mp4'
+output_loc = './frame_peeling/'
 video_to_frames(input_loc, output_loc)
 
 

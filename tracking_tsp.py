@@ -132,9 +132,9 @@ def main():
 	sp_labels2 = np.array(sp_labels2,dtype=np.int32)
 
 	# sp_labels1 = mat['sp_labels'][:,:,18]
-	sp_labels1 = mat['sp_labels'][:,:,91]
+	sp_labels1 = mat['sp_labels'][:,:,81]
 
-	a = Joe_segmentation('./frame/00092.jpg', './svmfile.pkl')
+	a = Joe_segmentation('./frame/0008s2.jpg', './svmfile.pkl')
 	sp20 = np.array(tranpose(sp_labels2),dtype = np.int32)
 	sp19 = np.array(tranpose(sp_labels1),dtype = np.int32)
 	[result, list_seg19, list_seg19_proba] = a.segmentation_tsp(sp19)

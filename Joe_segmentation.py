@@ -391,7 +391,9 @@ if __name__ == "__main__":
 	# 1: training new svm model 2&3: use existed model to predict
 	# c = svm_training('./feature/outfile_sk.npy', './feature/outfile_fl.npy', './feature/outfile_ot.npy')
 
-	a = Joe_segmentation('opticalfb.png', './svmfile.pkl')
+	# a = Joe_segmentation('opticalfb.png', './svmfile.pkl')
+	a = Joe_segmentation('./frame_peeling/00071.jpg', './svmfile.pkl')
+	
 	result,temp1,temp2 = a.segmentation()
 	cv2.imshow("result", result)
 	cv2.waitKey(0)
